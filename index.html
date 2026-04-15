@@ -106,19 +106,20 @@
     <div class="print-container max-w-5xl mx-auto bg-white shadow-xl mb-10">
 
         <!-- Barra superior de herramientas (Solo web) -->
-        <div class="no-print p-4 bg-slate-800 text-white flex justify-between items-center rounded-t-lg gap-3">
-            <div class="flex items-center gap-3 min-w-0">
-                <h2 class="text-lg font-bold whitespace-nowrap"><i class="fa-solid fa-file-lines"></i> Formulario Digitalizado</h2>
+        <div class="no-print p-4 bg-slate-800 text-white flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center rounded-t-lg">
+            <div class="flex items-center gap-2 min-w-0">
+                <i class="fa-solid fa-file-lines text-lg"></i>
+                <h2 class="hidden sm:block text-lg font-bold whitespace-nowrap">Formulario Digitalizado</h2>
                 <span id="recordModeBadge"
                     class="inline-flex items-center px-2 py-1 rounded-full text-[0.65rem] font-bold bg-slate-600 text-slate-100 whitespace-nowrap">Nuevo</span>
             </div>
-            <div class="flex flex-wrap items-center gap-2 justify-end">
+            <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:justify-end w-full sm:w-auto">
                 <button type="button" id="btnNuevo" onclick="nuevaAuditoria()"
-                    class="bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center gap-2">
+                    class="w-full sm:w-auto bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
                     <i class="fa-solid fa-plus"></i> Nuevo
                 </button>
                 <button type="button" id="btnGuardar" onclick="guardarAuditoria()"
-                    class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center gap-2">
+                    class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Auditoría
                 </button>
             </div>
@@ -132,8 +133,7 @@
                 <!-- Logo -->
                 <div class="md:w-1/4 p-4 flex flex-col items-center justify-center form-border-r">
                     <i class="fa-solid fa-cloud text-3xl mb-1"></i>
-                    <span class="font-bold text-lg tracking-wider">COFACO</span>
-                    <span class="text-[0.6rem] uppercase">Industrias S.A.</span>
+                    <span class="font-bold text-[0.95rem] sm:text-lg tracking-wider text-center leading-tight">COFACO INDUSTRIES S.A.</span>
                 </div>
                 <!-- Título Central -->
                 <div class="md:w-1/2 p-4 flex items-center justify-center text-center">
@@ -206,32 +206,45 @@
 
             <!-- DATOS GENERALES -->
             <div class="grid grid-cols-1 md:grid-cols-2 form-border-b">
-                <div class="form-border-r flex flex-col">
-                    <div class="flex form-border-b"><span class="w-24 px-2 font-semibold">Fecha</span><input type="date"
-                            id="genFecha" name="Fecha" class="form-border-l"></div>
-                    <div class="flex form-border-b"><span class="w-24 px-2 font-semibold">Cliente</span>
-                        <select id="genCliente" name="Cliente" class="form-border-l w-full bg-transparent outline-none px-2">
+                <div class="flex flex-col md:border-r md:border-black">
+                    <div class="flex flex-col sm:flex-row form-border-b">
+                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Fecha</span>
+                        <input type="date" id="genFecha" name="Fecha" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
+                    </div>
+                    <div class="flex flex-col sm:flex-row form-border-b">
+                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Cliente</span>
+                        <select id="genCliente" name="Cliente" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
                             <option value="">Seleccionar cliente...</option>
                         </select>
                     </div>
-                    <div class="flex form-border-b"><span class="w-24 px-2 font-semibold">Estilo</span><input
-                            type="text" id="genEstilo" name="Estilo" class="form-border-l"></div>
-                    <div class="flex"><span class="w-24 px-2 font-semibold">Tipo de Tela</span><input type="text"
-                            id="genTela" name="Tipo de Tela" class="form-border-l"></div>
+                    <div class="flex flex-col sm:flex-row form-border-b">
+                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Estilo</span>
+                        <input type="text" id="genEstilo" name="Estilo" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
+                    </div>
+                    <div class="flex flex-col sm:flex-row">
+                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Tipo de Tela</span>
+                        <input type="text" id="genTela" name="Tipo de Tela" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
+                    </div>
                 </div>
                 <div class="flex flex-col">
-                    <div class="flex form-border-b"><span class="w-36 px-2 font-semibold">Orden de Producción
-                            N°</span><input type="text" id="genOP" name="Orden de Producción N°" class="form-border-l">
+                    <div class="flex flex-col sm:flex-row form-border-b">
+                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Orden de Producción N°</span>
+                        <input type="text" id="genOP" name="Orden de Producción N°" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
                     </div>
-                    <div class="flex form-border-b"><span class="w-36 px-2 font-semibold">Partida</span><input
-                            type="text" id="genPartida" name="Partida" class="form-border-l"></div>
-                    <div class="flex form-border-b"><span class="w-36 px-2 font-semibold">Color</span><input type="text"
-                            id="genColor" name="Color" class="form-border-l"></div>
-                    <div class="flex"><span class="w-36 px-2 font-semibold"># de molde</span><input type="text"
-                            id="genMolde" name="# de molde" class="form-border-l"></div>
+                    <div class="flex flex-col sm:flex-row form-border-b">
+                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Partida</span>
+                        <input type="text" id="genPartida" name="Partida" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
+                    </div>
+                    <div class="flex flex-col sm:flex-row form-border-b">
+                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Color</span>
+                        <input type="text" id="genColor" name="Color" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
+                    </div>
+                    <div class="flex flex-col sm:flex-row">
+                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap"># de molde</span>
+                        <input type="text" id="genMolde" name="# de molde" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
+                    </div>
                 </div>
             </div>
-
             <!-- NAVEGACIÓN DE MÓDULOS (TABS) -->
             <div id="formTabs" class="flex text-[0.6rem] sm:text-xs font-bold no-print form-border-b bg-gray-200">
                 <!-- Casillero de Lupa (Buscador OP) -->
@@ -1149,7 +1162,7 @@
                 if (molde) document.getElementById('genMolde').value = molde;
 
                 // Simular que trajimos los demás datos de la base de datos
-                document.getElementById('genCliente').value = 'COFACO Industrias S.A.';
+                document.getElementById('genCliente').value = 'COFACO INDUSTRIES S.A.';
                 document.getElementById('genEstilo').value = 'Prenda Estilo ' + (op || 'Genérico');
                 document.getElementById('genTela').value = 'Algodón Jersey 20/1 Peinado';
                 document.getElementById('genFecha').value = new Date().toISOString().split('T')[0];
