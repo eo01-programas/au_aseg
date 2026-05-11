@@ -175,37 +175,44 @@
                         </button>
                     </div>
                     <div class="p-3 border-b border-blue-200">
-                        <div class="flex flex-wrap gap-2 items-end">
-                            <div class="flex-1 min-w-[100px]">
+                        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-2">
+                            <div>
+                                <label class="block text-[0.6rem] font-bold text-gray-700">Fecha inicio</label>
+                                <input type="date" id="filterFechaInicio"
+                                    class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500">
+                            </div>
+                            <div>
+                                <label class="block text-[0.6rem] font-bold text-gray-700">Fecha fin</label>
+                                <input type="date" id="filterFechaFin"
+                                    class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500">
+                            </div>
+                            <div>
                                 <label class="block text-[0.6rem] font-bold text-gray-700">Orden de Producción</label>
-                                <input type="text" id="searchOP"
+                                <input type="text" id="filterOP"
                                     class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
                                     placeholder="Ej. 10245">
                             </div>
-                            <div class="flex-1 min-w-[100px]">
+                            <div>
                                 <label class="block text-[0.6rem] font-bold text-gray-700">Partida</label>
-                                <input type="text" id="searchPartida"
+                                <input type="text" id="filterPartida"
                                     class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
                                     placeholder="Ej. P-01">
                             </div>
-                            <div class="flex-1 min-w-[100px]">
+                            <div>
                                 <label class="block text-[0.6rem] font-bold text-gray-700">Corte</label>
-                                <input type="text" id="searchCorte"
+                                <input type="text" id="filterCorte"
                                     class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
                                     placeholder="Ej. Corte 1">
                             </div>
-                            <div class="flex-1 min-w-[100px]">
-                                <label class="block text-[0.6rem] font-bold text-gray-700"># de molde</label>
-                                <input type="text" id="searchMolde"
+                            <div>
+                                <label class="block text-[0.6rem] font-bold text-gray-700">Subcortes</label>
+                                <input type="text" id="filterSubcortes"
                                     class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
-                                    placeholder="Ej. M-40">
+                                    placeholder="Ej. 101 102">
                             </div>
-                            <div class="w-full sm:w-auto mt-2 sm:mt-0 flex gap-2">
-                                <button type="button" id="btnRecuperar" onclick="simularRecuperacion()"
-                                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-4 rounded text-xs transition shadow whitespace-nowrap flex items-center justify-center gap-1">
-                                    <i class="fa-solid fa-cloud-arrow-down"></i> Cargar Datos
-                                </button>
-                            </div>
+                        </div>
+                        <div class="mt-2 text-[0.65rem] text-slate-600">
+                            Filtra por rango de fechas y escribe en los demás campos como en Excel.
                         </div>
                         <div id="searchStatus" class="mt-2 text-[0.65rem] text-slate-600"></div>
                     </div>
@@ -1244,65 +1251,14 @@
         // SIMULACIÓN DE RECUPERACIÓN DE DATOS
         // ==========================================
         window.simularRecuperacion = function () {
-            const btn = document.getElementById('btnRecuperar');
-
-            // Obtener valores
-            const op = document.getElementById('searchOP').value.trim();
-            const partida = document.getElementById('searchPartida').value.trim();
-            const corte = document.getElementById('searchCorte').value.trim();
-            const molde = document.getElementById('searchMolde').value.trim();
-
-            if (!op && !partida && !corte && !molde) {
-                const originalText = btn.innerHTML;
-                btn.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Ingrese un dato';
-                btn.classList.replace('bg-blue-600', 'bg-red-500');
-                btn.classList.replace('hover:bg-blue-700', 'hover:bg-red-600');
-
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.classList.replace('bg-red-500', 'bg-blue-600');
-                    btn.classList.replace('hover:bg-red-600', 'hover:bg-blue-700');
-                }, 2000);
-                return;
+            if (typeof window.toggleSearch === 'function') {
+                window.toggleSearch(true);
+            } else {
+                const panel = document.getElementById('searchPanel');
+                if (panel) {
+                    panel.classList.remove('hidden');
+                }
             }
-
-            // Estado de carga
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Cargando...';
-            btn.disabled = true;
-
-            // Simular consulta a DB
-            setTimeout(() => {
-                // Rellenar la cabecera
-                if (op) document.getElementById('genOP').value = op;
-                if (partida) document.getElementById('genPartida').value = partida;
-                if (corte) document.getElementById('genCorte').value = corte;
-                if (molde) document.getElementById('genMolde').value = molde;
-
-                // Simular que trajimos los demás datos de la base de datos
-                document.getElementById('genCliente').value = 'COFACO INDUSTRIES S.A.';
-                document.getElementById('genEstilo').value = 'Prenda Estilo ' + (op || 'Genérico');
-                document.getElementById('genTela').value = 'Algodón Jersey 20/1 Peinado';
-                document.getElementById('genFecha').value = new Date().toISOString().split('T')[0];
-
-                // Éxito
-                btn.innerHTML = '<i class="fa-solid fa-check"></i> ¡Cargado!';
-                btn.classList.replace('bg-blue-600', 'bg-green-600');
-                btn.classList.replace('hover:bg-blue-700', 'hover:bg-green-700');
-
-                // Ocultar el panel de búsqueda automáticamente después de cargar con éxito
-                setTimeout(() => {
-                    toggleSearch();
-                }, 1000);
-
-                setTimeout(() => {
-                    btn.innerHTML = originalText;
-                    btn.classList.replace('bg-green-600', 'bg-blue-600');
-                    btn.classList.replace('hover:bg-green-700', 'hover:bg-blue-700');
-                    btn.disabled = false;
-                }, 2000);
-
-            }, 800);
         };
 
         // ==========================================
@@ -1402,14 +1358,15 @@
                 btnGuardar: document.getElementById('btnGuardar'),
                 btnGuardarComoNuevo: document.getElementById('btnGuardarComoNuevo'),
                 btnNuevo: document.getElementById('btnNuevo'),
-                btnRecuperar: document.getElementById('btnRecuperar'),
                 searchPanel: document.getElementById('searchPanel'),
                 searchStatus: document.getElementById('searchStatus'),
                 searchResults: document.getElementById('searchResults'),
-                searchOP: document.getElementById('searchOP'),
-                searchPartida: document.getElementById('searchPartida'),
-                searchCorte: document.getElementById('searchCorte'),
-                searchMolde: document.getElementById('searchMolde'),
+                filterFechaInicio: document.getElementById('filterFechaInicio'),
+                filterFechaFin: document.getElementById('filterFechaFin'),
+                filterOP: document.getElementById('filterOP'),
+                filterPartida: document.getElementById('filterPartida'),
+                filterCorte: document.getElementById('filterCorte'),
+                filterSubcortes: document.getElementById('filterSubcortes'),
                 recordId: document.getElementById('recordId'),
                 recordModeBadge: document.getElementById('recordModeBadge'),
                 recordDetailModal: document.getElementById('recordDetailModal'),
@@ -1437,8 +1394,10 @@
                 currentRecordId: '',
                 currentRowNumber: 0,
                 mode: 'new',
+                allRecords: [],
                 searchResults: [],
                 selectedRecord: null,
+                gridLoaded: false,
                 clientsLoaded: false
             };
 
@@ -1714,6 +1673,16 @@
                 return text;
             }
 
+            function parseDateForGrid(value) {
+                const normalized = normalizeDateForInput(value);
+                if (!normalized) {
+                    return 0;
+                }
+
+                const parsed = new Date(`${normalized}T00:00:00`);
+                return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+            }
+
             function setSignatureState(checkbox, timestampEl, checked, timestampText) {
                 if (!checkbox || !timestampEl) {
                     return;
@@ -1943,14 +1912,18 @@
                                         </button>
                                     </td>
                                 </tr>`;
-                        }).join('');
+                    }).join('');
 
                         return `
-                            <section class="rounded-lg border border-slate-300 bg-white shadow-sm overflow-hidden">
-                                <div class="flex items-center justify-between gap-2 px-3 py-2 bg-slate-100 border-b border-slate-300">
-                                    <div class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHtml(cliente)}</div>
-                                    <div class="text-[0.65rem] font-semibold text-slate-600">${items.length} registro(s)</div>
-                                </div>
+                            <details class="rounded-lg border border-slate-300 bg-white shadow-sm overflow-hidden" ${items.length === 1 ? 'open' : ''}>
+                                <summary class="flex list-none items-center justify-between gap-2 px-3 py-2 bg-slate-100 border-b border-slate-300 cursor-pointer select-none">
+                                    <div class="flex items-center gap-2 min-w-0">
+                                        <span class="inline-flex h-5 w-5 items-center justify-center rounded-full bg-slate-700 text-white text-[0.6rem] font-bold">▸</span>
+                                        <span class="text-[0.65rem] font-bold uppercase tracking-wide text-slate-600">Cliente</span>
+                                        <div class="font-bold text-slate-800 text-xs sm:text-sm truncate">${escapeHtml(cliente)}</div>
+                                    </div>
+                                    <div class="text-[0.65rem] font-semibold text-slate-600 whitespace-nowrap">${items.length} registro(s)</div>
+                                </summary>
                                 <div class="overflow-auto">
                                     <table class="w-full min-w-[860px] border-collapse text-[0.65rem] sm:text-xs bg-white">
                                         <thead class="bg-slate-50">
@@ -1969,7 +1942,7 @@
                                         </tbody>
                                     </table>
                                 </div>
-                            </section>`;
+                            </details>`;
                     }).join('');
 
                 dom.searchResults.innerHTML = `
@@ -1989,6 +1962,76 @@
                         openRecordDetailModal(record);
                     });
                 });
+            }
+
+            function getGridFilters() {
+                return {
+                    fechaInicio: dom.filterFechaInicio ? dom.filterFechaInicio.value.trim() : '',
+                    fechaFin: dom.filterFechaFin ? dom.filterFechaFin.value.trim() : '',
+                    op: dom.filterOP ? dom.filterOP.value.trim() : '',
+                    partida: dom.filterPartida ? dom.filterPartida.value.trim() : '',
+                    corte: dom.filterCorte ? dom.filterCorte.value.trim() : '',
+                    subcortes: dom.filterSubcortes ? dom.filterSubcortes.value.trim() : ''
+                };
+            }
+
+            function matchesGridFilter(value, query) {
+                if (!query) {
+                    return true;
+                }
+
+                return normalizeKey(value).includes(normalizeKey(query));
+            }
+
+            function applyGridFilters() {
+                const filters = getGridFilters();
+                const startDate = filters.fechaInicio ? parseDateForGrid(filters.fechaInicio) : 0;
+                const endDate = filters.fechaFin ? parseDateForGrid(filters.fechaFin) : 0;
+                const filtered = (state.allRecords || []).filter((record) => (
+                    (
+                        !startDate || parseDateForGrid(recordValue(record, 'Fecha')) >= startDate
+                    ) &&
+                    (
+                        !endDate || parseDateForGrid(recordValue(record, 'Fecha')) <= endDate
+                    ) &&
+                    matchesGridFilter(recordValue(record, 'Orden de Producción N°'), filters.op) &&
+                    matchesGridFilter(recordValue(record, 'Partida'), filters.partida) &&
+                    matchesGridFilter(recordValue(record, 'Corte'), filters.corte) &&
+                    matchesGridFilter(recordValue(record, 'Subcortes'), filters.subcortes)
+                ));
+
+                renderSearchResults(filtered);
+
+                const activeFilters = Object.values(filters).filter(Boolean).length;
+                const groupedClients = [...new Set(filtered.map((record) => String(recordValue(record, 'Cliente') || 'Sin cliente').trim() || 'Sin cliente'))].length;
+                setSearchStatus(
+                    activeFilters
+                        ? `${filtered.length} registro(s) filtrados en ${groupedClients} cliente(s).`
+                        : `${filtered.length} registro(s) cargados en ${groupedClients} cliente(s).`,
+                    filtered.length ? 'success' : 'warning'
+                );
+            }
+
+            async function loadGridRecords() {
+                setSearchStatus('Cargando todos los registros...', 'info');
+
+                try {
+                    const response = await gasJsonp({ action: 'listall' });
+                    if (response && response.status === 'error') {
+                        throw new Error(response.message || 'Error al cargar los registros');
+                    }
+
+                    state.allRecords = Array.isArray(response && response.records) ? response.records : [];
+                    state.gridLoaded = true;
+                    applyGridFilters();
+                    showToast('Grid actualizada.', 'success');
+                } catch (error) {
+                    state.allRecords = [];
+                    state.gridLoaded = false;
+                    renderSearchResults([]);
+                    setSearchStatus(`Error al cargar grid: ${error.message}`, 'error');
+                    showToast(`Error al cargar grid: ${error.message}`, 'error');
+                }
             }
 
             async function loadClients() {
@@ -2014,62 +2057,6 @@
                 } catch (error) {
                     dom.genCliente.innerHTML = '<option value="">No se pudieron cargar clientes</option>';
                     showToast(`No se pudo cargar la lista de clientes: ${error.message}`, 'warning');
-                }
-            }
-
-            async function searchRecords() {
-                const filters = {
-                    op: dom.searchOP ? dom.searchOP.value.trim() : '',
-                    partida: dom.searchPartida ? dom.searchPartida.value.trim() : '',
-                    corte: dom.searchCorte ? dom.searchCorte.value.trim() : '',
-                    molde: dom.searchMolde ? dom.searchMolde.value.trim() : ''
-                };
-
-                const hasFilters = Object.values(filters).some(Boolean);
-                const originalHtml = dom.btnRecuperar.innerHTML;
-
-                dom.btnRecuperar.disabled = true;
-                dom.btnRecuperar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Buscando...';
-                setSearchStatus(hasFilters ? 'Consultando registros...' : 'Cargando todos los registros...', 'info');
-
-                try {
-                    const response = hasFilters
-                        ? await gasJsonp({ action: 'search', ...filters, limit: 20 })
-                        : await gasJsonp({ action: 'listall' });
-
-                    if (response && response.status === 'error') {
-                        throw new Error(response.message || 'Error al consultar registros');
-                    }
-
-                    const records = Array.isArray(response && response.records)
-                        ? response.records
-                        : [];
-
-                    renderSearchResults(records);
-
-                    if (hasFilters && records.length === 1) {
-                        fillForm(records[0]);
-                        toggleSearch(false);
-                        showToast('Se cargó un registro para edición.', 'success');
-                    } else if (records.length) {
-                        showToast(`${records.length} registro(s) disponibles.`, 'info');
-                    } else {
-                        showToast('No se encontraron registros.', 'warning');
-                    }
-
-                    setSearchStatus(
-                        records.length
-                            ? `${records.length} registro(s) encontrados.`
-                            : 'No se encontraron registros.',
-                        records.length ? 'success' : 'warning'
-                    );
-                } catch (error) {
-                    renderSearchResults([]);
-                    setSearchStatus(`Error al consultar: ${error.message}`, 'error');
-                    showToast(`Error al consultar registros: ${error.message}`, 'error');
-                } finally {
-                    dom.btnRecuperar.disabled = false;
-                    dom.btnRecuperar.innerHTML = originalHtml;
                 }
             }
 
@@ -2148,14 +2135,6 @@
                     return;
                 }
 
-                const popup = window.open('about:blank', '_blank');
-                if (!popup) {
-                    showToast('El navegador bloqueó la ventana del PDF.', 'warning');
-                    return;
-                }
-
-                popup.document.write('<p style="font-family:Arial,sans-serif;padding:16px">Generando PDF...</p>');
-
                 try {
                     const response = await gasJsonp({
                         action: 'getpdf',
@@ -2165,14 +2144,16 @@
                     });
 
                     if (!response || response.status !== 'success' || !response.url) {
-                        throw new Error((response && response.message) || 'No se pudo generar el PDF');
+                        throw new Error((response && response.message) || 'No se pudo localizar el PDF');
                     }
 
-                    popup.location.href = response.url;
-                    popup.focus();
+                    const opened = window.open(response.url, '_blank', 'noopener');
+                    if (!opened) {
+                        throw new Error('El navegador bloqueó la ventana del PDF');
+                    }
+
                     showToast('PDF abierto correctamente.', 'success');
                 } catch (error) {
-                    popup.close();
                     showToast(`No se pudo abrir el PDF: ${error.message}`, 'error');
                 }
             }
@@ -2215,6 +2196,15 @@
                 }
             }
 
+            let gridFilterTimer = null;
+
+            function scheduleGridFilter() {
+                clearTimeout(gridFilterTimer);
+                gridFilterTimer = setTimeout(() => {
+                    applyGridFilters();
+                }, 120);
+            }
+
             async function toggleSearch(forceOpen) {
                 if (!dom.searchPanel) {
                     return;
@@ -2227,7 +2217,11 @@
                 dom.searchPanel.classList.toggle('hidden', !shouldOpen);
 
                 if (shouldOpen) {
-                    await searchRecords();
+                    if (state.gridLoaded && state.allRecords.length) {
+                        applyGridFilters();
+                    } else {
+                        await loadGridRecords();
+                    }
                 }
             }
 
@@ -2278,12 +2272,24 @@
                     dom.btnModalVerFormulario.addEventListener('click', verFormularioRegistroSeleccionado);
                 }
 
+                [
+                    dom.filterFechaInicio,
+                    dom.filterFechaFin,
+                    dom.filterOP,
+                    dom.filterPartida,
+                    dom.filterCorte,
+                    dom.filterSubcortes
+                ].filter(Boolean).forEach((input) => {
+                    input.addEventListener('input', scheduleGridFilter);
+                });
+
                 await loadClients();
+                await loadGridRecords();
                 nuevaAuditoria(true);
             }
 
             window.toggleSearch = toggleSearch;
-            window.simularRecuperacion = searchRecords;
+            window.simularRecuperacion = loadGridRecords;
             window.guardarAuditoria = guardarAuditoria;
             window.guardarComoNuevo = guardarComoNuevo;
             window.nuevaAuditoria = nuevaAuditoria;
