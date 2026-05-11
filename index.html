@@ -118,6 +118,10 @@
                     class="w-full sm:w-auto bg-slate-600 hover:bg-slate-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
                     <i class="fa-solid fa-plus"></i> Nuevo
                 </button>
+                <button type="button" id="btnGuardarComoNuevo" onclick="guardarComoNuevo()"
+                    class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-copy"></i> Guardar como nuevo
+                </button>
                 <button type="button" id="btnGuardar" onclick="guardarAuditoria()"
                     class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Auditoría
@@ -158,92 +162,150 @@
                 </div>
             </div>
 
-            <!-- BUSCADOR / RECUPERACIÓN DE DATOS (Oculto por defecto) -->
-            <div id="searchPanel" class="bg-blue-50 form-border-b p-3 no-print hidden">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="text-[0.7rem] sm:text-sm font-bold text-blue-800"><i
-                            class="fa-solid fa-magnifying-glass"></i> Recuperar Datos de Producción</h3>
-                    <button onclick="toggleSearch()" class="text-gray-500 hover:text-red-500 transition"><i
-                            class="fa-solid fa-xmark"></i></button>
-                </div>
-                <div class="flex flex-wrap gap-2 items-end">
-                    <div class="flex-1 min-w-[100px]">
-                        <label class="block text-[0.6rem] font-bold text-gray-700">Orden de Producción</label>
-                        <input type="text" id="searchOP"
-                            class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
-                            placeholder="Ej. 10245">
-                    </div>
-                    <div class="flex-1 min-w-[100px]">
-                        <label class="block text-[0.6rem] font-bold text-gray-700">Partida</label>
-                        <input type="text" id="searchPartida"
-                            class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
-                            placeholder="Ej. P-01">
-                    </div>
-                    <div class="flex-1 min-w-[100px]">
-                        <label class="block text-[0.6rem] font-bold text-gray-700">Color</label>
-                        <input type="text" id="searchColor"
-                            class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
-                            placeholder="Ej. Azul">
-                    </div>
-                    <div class="flex-1 min-w-[100px]">
-                        <label class="block text-[0.6rem] font-bold text-gray-700"># de molde</label>
-                        <input type="text" id="searchMolde"
-                            class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
-                            placeholder="Ej. M-40">
-                    </div>
-                    <div class="w-full sm:w-auto mt-2 sm:mt-0">
-                        <button type="button" id="btnRecuperar" onclick="simularRecuperacion()"
-                            class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-4 rounded text-xs transition shadow whitespace-nowrap flex items-center justify-center gap-1">
-                            <i class="fa-solid fa-cloud-arrow-down"></i> Cargar Datos
+            <!-- BUSCADOR / GRID MODAL (Oculto por defecto) -->
+            <div id="searchPanel"
+                class="fixed inset-0 z-[1900] hidden flex items-center justify-center bg-black/55 px-3 py-4 no-print">
+                <div
+                    class="w-full max-w-6xl max-h-[90vh] rounded-xl bg-blue-50 border border-blue-200 shadow-2xl overflow-hidden flex flex-col">
+                    <div class="flex justify-between items-center px-4 py-3 border-b border-blue-200 bg-blue-100">
+                        <h3 class="text-[0.7rem] sm:text-sm font-bold text-blue-800"><i
+                                class="fa-solid fa-magnifying-glass"></i> Recuperar Datos de Producción</h3>
+                        <button type="button" onclick="toggleSearch()" class="text-gray-500 hover:text-red-500 transition">
+                            <i class="fa-solid fa-xmark"></i>
                         </button>
                     </div>
+                    <div class="p-3 border-b border-blue-200">
+                        <div class="flex flex-wrap gap-2 items-end">
+                            <div class="flex-1 min-w-[100px]">
+                                <label class="block text-[0.6rem] font-bold text-gray-700">Orden de Producción</label>
+                                <input type="text" id="searchOP"
+                                    class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
+                                    placeholder="Ej. 10245">
+                            </div>
+                            <div class="flex-1 min-w-[100px]">
+                                <label class="block text-[0.6rem] font-bold text-gray-700">Partida</label>
+                                <input type="text" id="searchPartida"
+                                    class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
+                                    placeholder="Ej. P-01">
+                            </div>
+                            <div class="flex-1 min-w-[100px]">
+                                <label class="block text-[0.6rem] font-bold text-gray-700">Corte</label>
+                                <input type="text" id="searchCorte"
+                                    class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
+                                    placeholder="Ej. Corte 1">
+                            </div>
+                            <div class="flex-1 min-w-[100px]">
+                                <label class="block text-[0.6rem] font-bold text-gray-700"># de molde</label>
+                                <input type="text" id="searchMolde"
+                                    class="w-full border border-gray-400 rounded px-2 py-1 text-xs bg-white outline-none focus:border-blue-500"
+                                    placeholder="Ej. M-40">
+                            </div>
+                            <div class="w-full sm:w-auto mt-2 sm:mt-0 flex gap-2">
+                                <button type="button" id="btnRecuperar" onclick="simularRecuperacion()"
+                                    class="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white font-bold py-1.5 px-4 rounded text-xs transition shadow whitespace-nowrap flex items-center justify-center gap-1">
+                                    <i class="fa-solid fa-cloud-arrow-down"></i> Cargar Datos
+                                </button>
+                            </div>
+                        </div>
+                        <div id="searchStatus" class="mt-2 text-[0.65rem] text-slate-600"></div>
+                    </div>
+                    <div id="searchResults" class="flex-1 min-h-0 overflow-auto p-3"></div>
                 </div>
-                <div id="searchStatus" class="mt-2 text-[0.65rem] text-slate-600"></div>
-                <div id="searchResults" class="mt-3 grid gap-2"></div>
+            </div>
+
+            <div id="recordDetailModal" class="fixed inset-0 z-[2000] hidden items-center justify-center bg-black/50 px-4">
+                <div class="w-full max-w-md rounded-lg bg-white shadow-2xl border border-slate-300 overflow-hidden">
+                    <div class="flex items-center justify-between px-4 py-3 bg-slate-800 text-white">
+                        <h3 class="text-sm font-bold">Ver contenido total</h3>
+                        <button type="button" id="btnCerrarModal" class="text-white/80 hover:text-white text-lg leading-none">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                    <div class="px-4 py-4">
+                        <p id="modalRecordInfo" class="text-xs text-slate-700 mb-4"></p>
+                        <div class="flex flex-col gap-2 sm:flex-row">
+                            <button type="button" id="btnModalVerPdf"
+                                class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-file-pdf"></i> Abrir PDF
+                            </button>
+                            <button type="button" id="btnModalVerFormulario"
+                                class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
+                                <i class="fa-solid fa-file-pen"></i> Ver formulario
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <input type="hidden" id="recordId" name="ID_Auditoria" value="">
 
             <!-- DATOS GENERALES -->
-            <div class="grid grid-cols-1 md:grid-cols-2 form-border-b">
-                <div class="flex flex-col md:border-r md:border-black">
-                    <div class="flex flex-col sm:flex-row form-border-b">
-                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Fecha</span>
-                        <input type="date" id="genFecha" name="Fecha" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                    </div>
-                    <div class="flex flex-col sm:flex-row form-border-b">
-                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Cliente</span>
-                        <select id="genCliente" name="Cliente" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                            <option value="">Seleccionar cliente...</option>
-                        </select>
-                    </div>
-                    <div class="flex flex-col sm:flex-row form-border-b">
-                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Estilo</span>
-                        <input type="text" id="genEstilo" name="Estilo" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                    </div>
-                    <div class="flex flex-col sm:flex-row">
-                        <span class="w-full sm:w-24 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Tipo de Tela</span>
-                        <input type="text" id="genTela" name="Tipo de Tela" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                    </div>
-                </div>
-                <div class="flex flex-col">
-                    <div class="flex flex-col sm:flex-row form-border-b">
-                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Orden de Producción N°</span>
-                        <input type="text" id="genOP" name="Orden de Producción N°" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                    </div>
-                    <div class="flex flex-col sm:flex-row form-border-b">
-                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Partida</span>
-                        <input type="text" id="genPartida" name="Partida" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                    </div>
-                    <div class="flex flex-col sm:flex-row form-border-b">
-                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap">Color</span>
-                        <input type="text" id="genColor" name="Color" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                    </div>
-                    <div class="flex flex-col sm:flex-row">
-                        <span class="w-full sm:w-40 px-2 py-1 font-semibold text-[0.65rem] sm:text-xs leading-tight sm:leading-normal border-b border-black sm:border-b-0 sm:border-r sm:border-black sm:whitespace-nowrap"># de molde</span>
-                        <input type="text" id="genMolde" name="# de molde" class="w-full min-w-0 bg-transparent outline-none px-2 py-1 sm:py-0">
-                    </div>
-                </div>
+            <div class="form-border-b overflow-x-auto">
+                <table class="w-full border-collapse text-[0.65rem] sm:text-xs bg-white" style="min-width: 900px;">
+                    <tbody>
+                        <tr>
+                            <td class="w-28 sm:w-32 border border-black px-2 py-1 font-semibold whitespace-nowrap">Fecha</td>
+                            <td class="border border-black p-0">
+                                <input type="date" id="genFecha" name="Fecha"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                            <td class="w-36 sm:w-44 border border-black px-2 py-1 font-semibold whitespace-nowrap">Orden de Producción N°</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genOP" name="Orden de Producción N°"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap">Cliente</td>
+                            <td class="border border-black p-0">
+                                <select id="genCliente" name="Cliente" class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                                    <option value="">Seleccionar cliente...</option>
+                                </select>
+                            </td>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap">Partida</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genPartida" name="Partida"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap">Estilo</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genEstilo" name="Estilo"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap">Color</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genColor" name="Color"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap">Tipo de Tela</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genTela" name="Tipo de Tela"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap"># de molde</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genMolde" name="# de molde"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                        </tr>
+                        <tr>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap">Corte</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genCorte" name="Corte"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                            <td class="border border-black px-2 py-1 font-semibold whitespace-nowrap">Subcortes</td>
+                            <td class="border border-black p-0">
+                                <input type="text" id="genSubcortes" name="Subcortes"
+                                    class="w-full min-w-0 bg-transparent outline-none px-2 py-1">
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
             <!-- NAVEGACIÓN DE MÓDULOS (TABS) -->
             <div id="formTabs" class="flex text-[0.6rem] sm:text-xs font-bold no-print form-border-b bg-gray-200">
@@ -740,13 +802,41 @@
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="border border-black w-32"></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Corte_Talla_1" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Corte 1">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Corte_Talla_2" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Corte 2">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Corte_Talla_3" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Corte 3">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Corte_Talla_4" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Corte 4">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Corte_Talla_5" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Corte 5">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Corte_Talla_6" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Corte 6">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Corte_Talla_7" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Corte 7">
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="medidasCorteBody">
@@ -833,13 +923,41 @@
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="border border-black w-32"></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
-                                    <th class="border border-black py-1">Talla ></th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Hab_Talla_1" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Habilitado 1">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Hab_Talla_2" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Habilitado 2">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Hab_Talla_3" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Habilitado 3">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Hab_Talla_4" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Habilitado 4">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Hab_Talla_5" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Habilitado 5">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Hab_Talla_6" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Habilitado 6">
+                                    </th>
+                                    <th class="border border-black py-1 px-1">
+                                        <input type="text" name="Hab_Talla_7" placeholder="Talla"
+                                            class="w-full bg-transparent text-center outline-none text-[0.65rem] sm:text-xs font-semibold"
+                                            aria-label="Talla Habilitado 7">
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody id="medidasHabilitadoBody">
@@ -1131,10 +1249,10 @@
             // Obtener valores
             const op = document.getElementById('searchOP').value.trim();
             const partida = document.getElementById('searchPartida').value.trim();
-            const color = document.getElementById('searchColor').value.trim();
+            const corte = document.getElementById('searchCorte').value.trim();
             const molde = document.getElementById('searchMolde').value.trim();
 
-            if (!op && !partida && !color && !molde) {
+            if (!op && !partida && !corte && !molde) {
                 const originalText = btn.innerHTML;
                 btn.innerHTML = '<i class="fa-solid fa-circle-exclamation"></i> Ingrese un dato';
                 btn.classList.replace('bg-blue-600', 'bg-red-500');
@@ -1158,7 +1276,7 @@
                 // Rellenar la cabecera
                 if (op) document.getElementById('genOP').value = op;
                 if (partida) document.getElementById('genPartida').value = partida;
-                if (color) document.getElementById('genColor').value = color;
+                if (corte) document.getElementById('genCorte').value = corte;
                 if (molde) document.getElementById('genMolde').value = molde;
 
                 // Simular que trajimos los demás datos de la base de datos
@@ -1192,7 +1310,7 @@
         // ==========================================
 
         // URL DE TU WEB APP DE GOOGLE APPS SCRIPT
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbx5eHCbodp86IPNRCm84yfXSlYo2Xcst47zkjbvVmIqHPuX9DNI59upHtE_mW-sBpAfWQ/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbxdcQpxQEfJSYdIKIZLEiqC9V5J52gDGxfHeEd443gBZKIRido6z61cviPZ-2R42ySq5g/exec";
 
         window.guardarAuditoria = async function () {
             const btn = document.getElementById('btnGuardar');
@@ -1282,13 +1400,23 @@
         (() => {
             const dom = {
                 btnGuardar: document.getElementById('btnGuardar'),
+                btnGuardarComoNuevo: document.getElementById('btnGuardarComoNuevo'),
                 btnNuevo: document.getElementById('btnNuevo'),
                 btnRecuperar: document.getElementById('btnRecuperar'),
                 searchPanel: document.getElementById('searchPanel'),
                 searchStatus: document.getElementById('searchStatus'),
                 searchResults: document.getElementById('searchResults'),
+                searchOP: document.getElementById('searchOP'),
+                searchPartida: document.getElementById('searchPartida'),
+                searchCorte: document.getElementById('searchCorte'),
+                searchMolde: document.getElementById('searchMolde'),
                 recordId: document.getElementById('recordId'),
                 recordModeBadge: document.getElementById('recordModeBadge'),
+                recordDetailModal: document.getElementById('recordDetailModal'),
+                modalRecordInfo: document.getElementById('modalRecordInfo'),
+                btnCerrarModal: document.getElementById('btnCerrarModal'),
+                btnModalVerPdf: document.getElementById('btnModalVerPdf'),
+                btnModalVerFormulario: document.getElementById('btnModalVerFormulario'),
                 genFecha: document.getElementById('genFecha'),
                 genCliente: document.getElementById('genCliente'),
                 genEstilo: document.getElementById('genEstilo'),
@@ -1296,6 +1424,8 @@
                 genOP: document.getElementById('genOP'),
                 genPartida: document.getElementById('genPartida'),
                 genColor: document.getElementById('genColor'),
+                genCorte: document.getElementById('genCorte'),
+                genSubcortes: document.getElementById('genSubcortes'),
                 genMolde: document.getElementById('genMolde'),
                 firmaAnalista: document.getElementById('firmaAnalista'),
                 timeAnalista: document.getElementById('timeAnalista'),
@@ -1308,6 +1438,7 @@
                 currentRowNumber: 0,
                 mode: 'new',
                 searchResults: [],
+                selectedRecord: null,
                 clientsLoaded: false
             };
 
@@ -1320,6 +1451,8 @@
                 'Orden de Producción N°': ['OP'],
                 'Partida': ['Partida'],
                 'Color': ['Color'],
+                'Corte': ['Corte'],
+                'Subcortes': ['Subcortes'],
                 '# de molde': ['Molde'],
                 'Creado_El': ['Created_At'],
                 'Actualizado_El': ['Updated_At'],
@@ -1693,6 +1826,50 @@
                 }
             }
 
+            function openRecordDetailModal(record) {
+                if (!dom.recordDetailModal) {
+                    return;
+                }
+
+                state.selectedRecord = record || null;
+
+                const fecha = recordValue(record, 'Fecha');
+                const cliente = recordValue(record, 'Cliente');
+                const op = recordValue(record, 'Orden de Producción N°');
+                const partida = recordValue(record, 'Partida');
+                const color = recordValue(record, 'Color');
+                const corte = recordValue(record, 'Corte');
+                const subcortes = recordValue(record, 'Subcortes');
+                const id = recordValue(record, 'ID_Auditoria') || 'Sin ID';
+
+                if (dom.modalRecordInfo) {
+                    dom.modalRecordInfo.innerHTML = `
+                        <div class="space-y-1">
+                            <div><strong>ID:</strong> ${escapeHtml(id)}</div>
+                            <div><strong>Fecha:</strong> ${escapeHtml(fecha)}</div>
+                            <div><strong>Cliente:</strong> ${escapeHtml(cliente)}</div>
+                            <div><strong>OP:</strong> ${escapeHtml(op)}</div>
+                            <div><strong>Partida:</strong> ${escapeHtml(partida)}</div>
+                            <div><strong>Color:</strong> ${escapeHtml(color)}</div>
+                            <div><strong>Corte:</strong> ${escapeHtml(corte)}</div>
+                            <div><strong>Subcortes:</strong> ${escapeHtml(subcortes)}</div>
+                        </div>`;
+                }
+
+                dom.recordDetailModal.classList.remove('hidden');
+                dom.recordDetailModal.classList.add('flex');
+            }
+
+            function closeRecordDetailModal() {
+                if (!dom.recordDetailModal) {
+                    return;
+                }
+
+                dom.recordDetailModal.classList.add('hidden');
+                dom.recordDetailModal.classList.remove('flex');
+                state.selectedRecord = null;
+            }
+
             function renderSearchResults(records) {
                 state.searchResults = Array.isArray(records) ? records : [];
 
@@ -1708,46 +1885,108 @@
                     return;
                 }
 
-                dom.searchResults.innerHTML = state.searchResults.map((record, index) => {
-                    const title = recordValue(record, 'ID_Auditoria') || `Fila ${record.__rowNumber || index + 2}`;
-                    const op = recordValue(record, 'Orden de Producción N°');
-                    const fecha = recordValue(record, 'Fecha');
-                    const cliente = recordValue(record, 'Cliente');
-                    const partida = recordValue(record, 'Partida');
-                    const color = recordValue(record, 'Color');
-                    const molde = recordValue(record, '# de molde');
+                const grouped = state.searchResults.reduce((acc, record, index) => {
+                    const cliente = String(recordValue(record, 'Cliente') || 'Sin cliente').trim() || 'Sin cliente';
+                    if (!acc[cliente]) {
+                        acc[cliente] = [];
+                    }
+                    acc[cliente].push({ record, index });
+                    return acc;
+                }, {});
 
-                    return `
-                        <button type="button" data-record-index="${index}"
-                            class="w-full text-left p-3 rounded-lg border border-slate-200 bg-white hover:bg-blue-50 hover:border-blue-500 transition shadow-sm">
-                            <div class="flex items-start justify-between gap-3">
-                                <div class="min-w-0">
-                                    <div class="font-bold text-slate-800 truncate">${escapeHtml(title)}</div>
-                                    <div class="text-[0.68rem] text-slate-600 truncate">${escapeHtml(op)}</div>
+                const parseDateTime = (value) => {
+                    const text = String(value || '').trim();
+                    if (!text) {
+                        return 0;
+                    }
+                    if (/^\d{4}-\d{2}-\d{2}$/.test(text)) {
+                        return new Date(`${text}T00:00:00`).getTime();
+                    }
+                    const parsed = new Date(text);
+                    return Number.isNaN(parsed.getTime()) ? 0 : parsed.getTime();
+                };
+
+                const sections = Object.keys(grouped)
+                    .sort((a, b) => a.localeCompare(b, 'es'))
+                    .map((cliente) => {
+                        const items = grouped[cliente].slice().sort((a, b) => {
+                            const dateDiff = parseDateTime(recordValue(b.record, 'Fecha')) - parseDateTime(recordValue(a.record, 'Fecha'));
+                            if (dateDiff !== 0) {
+                                return dateDiff;
+                            }
+                            return String(recordValue(a.record, 'Orden de Producción N°') || '').localeCompare(
+                                String(recordValue(b.record, 'Orden de Producción N°') || ''),
+                                'es'
+                            );
+                        });
+
+                        const rows = items.map(({ record, index }) => {
+                            const fecha = recordValue(record, 'Fecha');
+                            const op = recordValue(record, 'Orden de Producción N°');
+                            const partida = recordValue(record, 'Partida');
+                            const color = recordValue(record, 'Color');
+                            const corte = recordValue(record, 'Corte');
+                            const subcortes = recordValue(record, 'Subcortes');
+
+                            return `
+                                <tr class="border-b border-slate-200 hover:bg-blue-50">
+                                    <td class="px-2 py-2 whitespace-nowrap">${escapeHtml(fecha)}</td>
+                                    <td class="px-2 py-2 whitespace-nowrap">${escapeHtml(op)}</td>
+                                    <td class="px-2 py-2">${escapeHtml(partida)}</td>
+                                    <td class="px-2 py-2">${escapeHtml(color)}</td>
+                                    <td class="px-2 py-2">${escapeHtml(corte)}</td>
+                                    <td class="px-2 py-2">${escapeHtml(subcortes)}</td>
+                                    <td class="px-2 py-2 text-center whitespace-nowrap">
+                                        <button type="button" data-detail-index="${index}"
+                                            class="inline-flex items-center gap-1 rounded bg-slate-800 px-2 py-1 text-[0.65rem] font-bold text-white hover:bg-slate-900 transition">
+                                            Ver contenido total
+                                        </button>
+                                    </td>
+                                </tr>`;
+                        }).join('');
+
+                        return `
+                            <section class="rounded-lg border border-slate-300 bg-white shadow-sm overflow-hidden">
+                                <div class="flex items-center justify-between gap-2 px-3 py-2 bg-slate-100 border-b border-slate-300">
+                                    <div class="font-bold text-slate-800 text-xs sm:text-sm">${escapeHtml(cliente)}</div>
+                                    <div class="text-[0.65rem] font-semibold text-slate-600">${items.length} registro(s)</div>
                                 </div>
-                                <span class="text-[0.65rem] text-slate-500 whitespace-nowrap">${escapeHtml(fecha)}</span>
-                            </div>
-                            <div class="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[0.65rem] text-slate-700">
-                                <span><strong>Cliente:</strong> ${escapeHtml(cliente)}</span>
-                                <span><strong>Partida:</strong> ${escapeHtml(partida)}</span>
-                                <span><strong>Color:</strong> ${escapeHtml(color)}</span>
-                                <span><strong>Molde:</strong> ${escapeHtml(molde)}</span>
-                            </div>
-                            <div class="mt-2 text-[0.65rem] font-semibold text-blue-700">Cargar en formulario</div>
-                        </button>`;
-                }).join('');
+                                <div class="overflow-auto">
+                                    <table class="w-full min-w-[860px] border-collapse text-[0.65rem] sm:text-xs bg-white">
+                                        <thead class="bg-slate-50">
+                                            <tr>
+                                                <th class="border border-slate-300 px-2 py-2 text-left">Fecha</th>
+                                                <th class="border border-slate-300 px-2 py-2 text-left">Orden de Producción</th>
+                                                <th class="border border-slate-300 px-2 py-2 text-left">Partida</th>
+                                                <th class="border border-slate-300 px-2 py-2 text-left">Color</th>
+                                                <th class="border border-slate-300 px-2 py-2 text-left">Corte</th>
+                                                <th class="border border-slate-300 px-2 py-2 text-left">Subcortes</th>
+                                                <th class="border border-slate-300 px-2 py-2 text-center">Contenido total</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            ${rows}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </section>`;
+                    }).join('');
 
-                dom.searchResults.querySelectorAll('[data-record-index]').forEach((button) => {
-                    button.addEventListener('click', async () => {
-                        const index = parseInt(button.dataset.recordIndex, 10);
+                dom.searchResults.innerHTML = `
+                    <div class="grid gap-3">
+                        ${sections}
+                    </div>`;
+
+                dom.searchResults.querySelectorAll('[data-detail-index]').forEach((button) => {
+                    button.addEventListener('click', (event) => {
+                        event.stopPropagation();
+                        const index = parseInt(button.dataset.detailIndex, 10);
                         const record = state.searchResults[index];
                         if (!record) {
                             return;
                         }
 
-                        fillForm(record);
-                        toggleSearch(false);
-                        showToast('Registro cargado para edición.', 'success');
+                        openRecordDetailModal(record);
                     });
                 });
             }
@@ -1780,10 +2019,10 @@
 
             async function searchRecords() {
                 const filters = {
-                    op: document.getElementById('searchOP').value.trim(),
-                    partida: document.getElementById('searchPartida').value.trim(),
-                    color: document.getElementById('searchColor').value.trim(),
-                    molde: document.getElementById('searchMolde').value.trim()
+                    op: dom.searchOP ? dom.searchOP.value.trim() : '',
+                    partida: dom.searchPartida ? dom.searchPartida.value.trim() : '',
+                    corte: dom.searchCorte ? dom.searchCorte.value.trim() : '',
+                    molde: dom.searchMolde ? dom.searchMolde.value.trim() : ''
                 };
 
                 const hasFilters = Object.values(filters).some(Boolean);
@@ -1791,12 +2030,12 @@
 
                 dom.btnRecuperar.disabled = true;
                 dom.btnRecuperar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Buscando...';
-                setSearchStatus(hasFilters ? 'Consultando registros...' : 'Cargando registros recientes...', 'info');
+                setSearchStatus(hasFilters ? 'Consultando registros...' : 'Cargando todos los registros...', 'info');
 
                 try {
                     const response = hasFilters
                         ? await gasJsonp({ action: 'search', ...filters, limit: 20 })
-                        : await gasJsonp({ action: 'list', limit: 10 });
+                        : await gasJsonp({ action: 'listall' });
 
                     if (response && response.status === 'error') {
                         throw new Error(response.message || 'Error al consultar registros');
@@ -1851,7 +2090,7 @@
                 throw new Error('No se pudo confirmar el registro guardado');
             }
 
-            async function guardarAuditoria() {
+            async function guardarAuditoria(forceNew = false) {
                 const opValue = dom.genOP.value.trim();
 
                 if (!opValue) {
@@ -1860,12 +2099,23 @@
                     return;
                 }
 
+                if (forceNew) {
+                    dom.recordId.value = '';
+                    state.currentRecordId = '';
+                    state.currentRowNumber = 0;
+                }
+
                 ensureRecordId();
                 const payload = collectFormData();
                 payload.__rowNumber = state.currentRowNumber || '';
 
-                dom.btnGuardar.disabled = true;
-                dom.btnGuardar.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+                const activeButton = forceNew ? dom.btnGuardarComoNuevo : dom.btnGuardar;
+                if (activeButton) {
+                    activeButton.disabled = true;
+                    activeButton.innerHTML = forceNew
+                        ? '<i class="fa-solid fa-spinner fa-spin"></i> Guardando nuevo...'
+                        : '<i class="fa-solid fa-spinner fa-spin"></i> Guardando...';
+                }
 
                 try {
                     await gasPost('upsert', payload);
@@ -1878,9 +2128,76 @@
                     showToast(`No se pudo guardar: ${error.message}`, 'error');
                     setSearchStatus(`Error al guardar: ${error.message}`, 'error');
                 } finally {
-                    dom.btnGuardar.disabled = false;
+                    if (activeButton) {
+                        activeButton.disabled = false;
+                        activeButton.innerHTML = forceNew
+                            ? '<i class="fa-solid fa-copy"></i> Guardar como nuevo'
+                            : '<i class="fa-solid fa-cloud-arrow-up"></i> Guardar Auditoría';
+                    }
                     setMode(state.mode);
                 }
+            }
+
+            async function guardarComoNuevo() {
+                await guardarAuditoria(true);
+            }
+
+            async function abrirPdfDeRegistro(record) {
+                if (!record) {
+                    showToast('No hay registro para abrir en PDF.', 'warning');
+                    return;
+                }
+
+                const popup = window.open('about:blank', '_blank');
+                if (!popup) {
+                    showToast('El navegador bloqueó la ventana del PDF.', 'warning');
+                    return;
+                }
+
+                popup.document.write('<p style="font-family:Arial,sans-serif;padding:16px">Generando PDF...</p>');
+
+                try {
+                    const response = await gasJsonp({
+                        action: 'getpdf',
+                        id: recordValue(record, 'ID_Auditoria'),
+                        row: record.__rowNumber || '',
+                        op: recordValue(record, 'Orden de Producción N°')
+                    });
+
+                    if (!response || response.status !== 'success' || !response.url) {
+                        throw new Error((response && response.message) || 'No se pudo generar el PDF');
+                    }
+
+                    popup.location.href = response.url;
+                    popup.focus();
+                    showToast('PDF abierto correctamente.', 'success');
+                } catch (error) {
+                    popup.close();
+                    showToast(`No se pudo abrir el PDF: ${error.message}`, 'error');
+                }
+            }
+
+            async function verPdfRegistroSeleccionado() {
+                if (!state.selectedRecord) {
+                    showToast('Seleccione un registro en la grid primero.', 'warning');
+                    return;
+                }
+
+                const record = state.selectedRecord;
+                closeRecordDetailModal();
+                await abrirPdfDeRegistro(record);
+            }
+
+            function verFormularioRegistroSeleccionado() {
+                if (!state.selectedRecord) {
+                    showToast('Seleccione un registro en la grid primero.', 'warning');
+                    return;
+                }
+
+                fillForm(state.selectedRecord);
+                closeRecordDetailModal();
+                toggleSearch(false);
+                showToast('Registro cargado en el formulario.', 'success');
             }
 
             function nuevaAuditoria(silent = false) {
@@ -1898,17 +2215,20 @@
                 }
             }
 
-            function toggleSearch(forceOpen) {
+            async function toggleSearch(forceOpen) {
                 if (!dom.searchPanel) {
                     return;
                 }
 
-                if (typeof forceOpen === 'boolean') {
-                    dom.searchPanel.classList.toggle('hidden', !forceOpen);
-                    return;
-                }
+                const shouldOpen = typeof forceOpen === 'boolean'
+                    ? forceOpen
+                    : dom.searchPanel.classList.contains('hidden');
 
-                dom.searchPanel.classList.toggle('hidden');
+                dom.searchPanel.classList.toggle('hidden', !shouldOpen);
+
+                if (shouldOpen) {
+                    await searchRecords();
+                }
             }
 
             function probarConexion() {
@@ -1930,6 +2250,34 @@
                 state.currentRowNumber = 0;
                 dom.recordId.value = '';
 
+                if (dom.recordDetailModal) {
+                    dom.recordDetailModal.addEventListener('click', (event) => {
+                        if (event.target === dom.recordDetailModal) {
+                            closeRecordDetailModal();
+                        }
+                    });
+                }
+
+                if (dom.searchPanel) {
+                    dom.searchPanel.addEventListener('click', (event) => {
+                        if (event.target === dom.searchPanel) {
+                            toggleSearch(false);
+                        }
+                    });
+                }
+
+                if (dom.btnCerrarModal) {
+                    dom.btnCerrarModal.addEventListener('click', closeRecordDetailModal);
+                }
+
+                if (dom.btnModalVerPdf) {
+                    dom.btnModalVerPdf.addEventListener('click', verPdfRegistroSeleccionado);
+                }
+
+                if (dom.btnModalVerFormulario) {
+                    dom.btnModalVerFormulario.addEventListener('click', verFormularioRegistroSeleccionado);
+                }
+
                 await loadClients();
                 nuevaAuditoria(true);
             }
@@ -1937,6 +2285,7 @@
             window.toggleSearch = toggleSearch;
             window.simularRecuperacion = searchRecords;
             window.guardarAuditoria = guardarAuditoria;
+            window.guardarComoNuevo = guardarComoNuevo;
             window.nuevaAuditoria = nuevaAuditoria;
             window.probarConexion = probarConexion;
             window.cargarClientes = loadClients;
