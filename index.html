@@ -122,6 +122,10 @@
                     class="w-full sm:w-auto bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
                     <i class="fa-solid fa-copy"></i> Guardar como nuevo
                 </button>
+                <button type="button" id="btnEliminar" onclick="eliminarAuditoria()" disabled
+                    class="w-full sm:w-auto bg-red-600 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed">
+                    <i class="fa-solid fa-trash-can"></i> Eliminar formulario
+                </button>
                 <button type="button" id="btnGuardar" onclick="guardarAuditoria()"
                     class="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded text-xs transition shadow flex items-center justify-center gap-2">
                     <i class="fa-solid fa-cloud-arrow-up"></i> Guardar Auditoría
@@ -1266,7 +1270,7 @@
         // ==========================================
 
         // URL DE TU WEB APP DE GOOGLE APPS SCRIPT
-        const GAS_URL = "https://script.google.com/macros/s/AKfycbxdcQpxQEfJSYdIKIZLEiqC9V5J52gDGxfHeEd443gBZKIRido6z61cviPZ-2R42ySq5g/exec";
+        const GAS_URL = "https://script.google.com/macros/s/AKfycbyBkG7NsX976ogByJ-LIC9GbbroBTPBYf0Nxym6vrn77WpFFM_La-2Ul_zm-iYq8XC9ag/exec";
 
         window.guardarAuditoria = async function () {
             const btn = document.getElementById('btnGuardar');
@@ -1357,6 +1361,7 @@
             const dom = {
                 btnGuardar: document.getElementById('btnGuardar'),
                 btnGuardarComoNuevo: document.getElementById('btnGuardarComoNuevo'),
+                btnEliminar: document.getElementById('btnEliminar'),
                 btnNuevo: document.getElementById('btnNuevo'),
                 searchPanel: document.getElementById('searchPanel'),
                 searchStatus: document.getElementById('searchStatus'),
@@ -1513,6 +1518,14 @@
                 dom.btnGuardar.innerHTML = isEdit
                     ? '<i class="fa-solid fa-pen-to-square"></i> Actualizar Auditoría'
                     : '<i class="fa-solid fa-cloud-arrow-up"></i> Guardar Auditoría';
+
+                if (dom.btnEliminar) {
+                    dom.btnEliminar.disabled = !isEdit;
+                    dom.btnEliminar.setAttribute('aria-disabled', String(!isEdit));
+                    dom.btnEliminar.title = isEdit
+                        ? 'Eliminar el formulario actual'
+                        : 'Cargue un registro existente para eliminarlo';
+                }
             }
 
             function showToast(message, tone = 'info') {
@@ -2077,6 +2090,28 @@
                 throw new Error('No se pudo confirmar el registro guardado');
             }
 
+            async function confirmDeletedRecord(recordId, rowNumber) {
+                for (let attempt = 0; attempt < 4; attempt += 1) {
+                    const response = await gasJsonp({
+                        action: 'getRecord',
+                        id: recordId,
+                        row: rowNumber || ''
+                    });
+
+                    if (response && response.status === 'not_found') {
+                        return true;
+                    }
+
+                    if (response && response.status === 'error') {
+                        throw new Error(response.message || 'Error al confirmar la eliminación');
+                    }
+
+                    await new Promise((resolve) => setTimeout(resolve, 350));
+                }
+
+                throw new Error('No se pudo confirmar la eliminación del registro');
+            }
+
             async function guardarAuditoria(forceNew = false) {
                 const opValue = dom.genOP.value.trim();
 
@@ -2127,6 +2162,55 @@
 
             async function guardarComoNuevo() {
                 await guardarAuditoria(true);
+            }
+
+            async function eliminarAuditoria() {
+                const recordId = String(dom.recordId.value || '').trim();
+                const rowNumber = state.currentRowNumber || 0;
+
+                if (!recordId || state.mode !== 'edit') {
+                    showToast('Primero cargue un registro existente para poder eliminarlo.', 'warning');
+                    return;
+                }
+
+                const opValue = String(dom.genOP.value || '').trim();
+                const confirmMessage = [
+                    'Esta acción eliminará de forma permanente el formulario actual.',
+                    recordId ? `ID: ${recordId}` : '',
+                    opValue ? `OP: ${opValue}` : ''
+                ].filter(Boolean).join('\n');
+
+                if (!window.confirm(confirmMessage)) {
+                    return;
+                }
+
+                const btn = dom.btnEliminar;
+                const originalHtml = btn ? btn.innerHTML : '';
+                if (btn) {
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Eliminando...';
+                }
+
+                try {
+                    await gasPost('delete', {
+                        ID_Auditoria: recordId,
+                        __rowNumber: rowNumber || ''
+                    });
+
+                    await confirmDeletedRecord(recordId, rowNumber);
+                    nuevaAuditoria(true);
+                    await loadGridRecords();
+                    showToast('Formulario eliminado correctamente.', 'success');
+                    setSearchStatus(`Registro ${recordId} eliminado correctamente.`, 'success');
+                } catch (error) {
+                    showToast(`No se pudo eliminar: ${error.message}`, 'error');
+                    setSearchStatus(`Error al eliminar: ${error.message}`, 'error');
+                } finally {
+                    if (btn) {
+                        btn.disabled = state.mode !== 'edit';
+                        btn.innerHTML = originalHtml;
+                    }
+                }
             }
 
             async function abrirPdfDeRegistro(record) {
@@ -2292,6 +2376,7 @@
             window.simularRecuperacion = loadGridRecords;
             window.guardarAuditoria = guardarAuditoria;
             window.guardarComoNuevo = guardarComoNuevo;
+            window.eliminarAuditoria = eliminarAuditoria;
             window.nuevaAuditoria = nuevaAuditoria;
             window.probarConexion = probarConexion;
             window.cargarClientes = loadClients;
